@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '@/plugins/axios'
+import { storage } from '@/utils/storage'
 
 const router = useRouter()
 
@@ -11,6 +12,8 @@ interface User {
     profileImage?: string
     interests?: string[]
     dateOfBirth?: string
+    preference?: string
+    gender?: string
 }
 
 const users = ref<User[]>([])
@@ -28,13 +31,26 @@ const currentUser = computed(() => {
 
 const userId = ref('')
 const bottomBarActive = ref(true);
+const loggedUserName = ref('')
 
 onMounted(async () => {
-    userId.value = localStorage.getItem('userId') || ''
+    userId.value = storage.getUserId() || ''
     if (!userId.value) {
         router.push('/login')
         return
     }
+
+    // Carregar nome do usuário logado
+    const storedName = storage.getUserName()
+    const storedEmail = storage.getUserEmail()
+
+    if (storedName) {
+        loggedUserName.value = storedName
+    } else if (storedEmail) {
+        const emailPart = storedEmail.split('@')[0]
+        loggedUserName.value = emailPart || 'Usuário'
+    }
+
     await loadUsers()
 })
 
@@ -119,10 +135,45 @@ const goToMatches = () => {
     router.push('/matches')
 }
 
+const getPreferenceIcon = (preference: string) => {
+    switch (preference) {
+        case 'Men':
+            return 'mdi-gender-male'
+        case 'Women':
+            return 'mdi-gender-female'
+        case 'Both':
+            return 'mdi-gender-male-female'
+        default:
+            return 'mdi-heart'
+    }
+}
+
+const getPreferenceText = (preference: string) => {
+    switch (preference) {
+        case 'Men':
+            return 'Interested in men'
+        case 'Women':
+            return 'Interested in women'
+        case 'Both':
+            return 'Interested in both'
+        default:
+            return preference
+    }
+}
+
 </script>
 
 <template>
     <v-container class="fill-height swipe-container pa-0" @click="bottomBarActive = !bottomBarActive">
+        <!-- Header com usuário logado -->
+        <div class="logged-user-header">
+            <v-avatar size="36" color="purple">
+                <span class="text-subtitle-2">{{ (loggedUserName && loggedUserName.length > 0) ?
+                    loggedUserName[0]?.toUpperCase() : '?' }}</span>
+            </v-avatar>
+            <span class="logged-user-name">{{ loggedUserName }}</span>
+        </div>
+
         <div class="card-container d-flex align-center justify-center">
             <div v-if="loading" class="text-center">
                 <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
@@ -143,6 +194,12 @@ const goToMatches = () => {
                     <div class="profile-text">
                         <h2 class="profile-name">
                             {{ currentUser.name }}
+                            <v-chip v-if="currentUser.preference" size="small" class="preference-chip ml-2">
+                                <v-icon size="14" class="mr-1">
+                                    {{ getPreferenceIcon(currentUser.preference) }}
+                                </v-icon>
+                                {{ getPreferenceText(currentUser.preference) }}
+                            </v-chip>
                         </h2>
                         <p class="profile-distance">
                             1.5 km away
@@ -230,6 +287,21 @@ const goToMatches = () => {
     height: 100%;
 }
 
+.logged-user-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(221, 53, 98, 0.3);
+}
+
+.logged-user-name {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+}
 
 .logo-text {
     color: white;
@@ -303,6 +375,19 @@ const goToMatches = () => {
     font-weight: 700;
     margin: 0;
     color: white;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.preference-chip {
+    background: rgba(221, 53, 98, 0.2) !important;
+    border: 1px solid rgba(221, 53, 98, 0.4) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 11px !important;
+    height: 24px !important;
+    padding: 0 8px !important;
 }
 
 .profile-distance {

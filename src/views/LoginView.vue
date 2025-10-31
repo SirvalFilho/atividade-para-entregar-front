@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { userService } from '../services/userService'
+import { storage } from '../utils/storage'
 
 const router = useRouter()
 
@@ -27,8 +28,12 @@ const handleSubmit = async () => {
 
             const user = await userService.login(email.value, password.value)
 
-            localStorage.setItem('userId', user._id)
-            localStorage.setItem('userEmail', email.value)
+            storage.setUserId(user._id)
+            storage.setUserEmail(email.value)
+
+            if (user.name) {
+                storage.setUserName(user.name)
+            }
 
             if (user.name) {
                 router.push('/swipe')
@@ -37,8 +42,8 @@ const handleSubmit = async () => {
             }
         } else {
 
-            localStorage.setItem('tempEmail', email.value)
-            localStorage.setItem('tempPassword', password.value)
+            storage.setTempEmail(email.value)
+            storage.setTempPassword(password.value)
 
             router.push('/profile-details')
         }

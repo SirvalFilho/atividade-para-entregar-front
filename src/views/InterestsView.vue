@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { userService } from '../services/userService'
+import { storage } from '../utils/storage'
 
 const router = useRouter()
 
@@ -45,15 +46,13 @@ const handleContinue = async () => {
     try {
         loading.value = true
 
-        const userId = localStorage.getItem('userId')
+        const userId = storage.getUserId()
 
         if (userId) {
             await userService.updateInterests(userId, selectedInterests.value)
         }
 
-        localStorage.setItem('userInterests', JSON.stringify(selectedInterests.value))
-
-        console.log('Interests saved:', selectedInterests.value)
+        sessionStorage.setItem('userInterests', JSON.stringify(selectedInterests.value))
 
         router.push('/swipe')
     } catch (error) {

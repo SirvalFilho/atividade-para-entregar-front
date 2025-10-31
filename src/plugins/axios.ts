@@ -14,12 +14,12 @@ axios.defaults.headers.common["Accept"] = "application/json";
 axios.interceptors.request.use(
   (config) => {
     // Adicionar token de autenticação se existir
-    const userId = localStorage.getItem("userId");
+    // IMPORTANTE: Usa sessionStorage para isolar abas diferentes
+    const userId = sessionStorage.getItem("userId");
     if (userId) {
       config.headers["user-token"] = userId;
     }
 
-    console.log("📤 Requisição:", config.method?.toUpperCase(), config.url);
     return config;
   },
   (error) => {

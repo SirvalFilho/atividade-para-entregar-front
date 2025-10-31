@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '@/plugins/axios'
+import { storage } from '@/utils/storage'
 
 const router = useRouter()
 
@@ -16,7 +17,7 @@ const loading = ref(false)
 const userId = ref('')
 
 onMounted(async () => {
-    userId.value = localStorage.getItem('userId') || ''
+    userId.value = storage.getUserId() || ''
     if (!userId.value) {
         router.push('/login')
         return
