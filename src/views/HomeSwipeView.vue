@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const router = useRouter()
 
@@ -38,12 +38,10 @@ onMounted(async () => {
     await loadUsers()
 })
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'
-
 const loadUsers = async () => {
     try {
         loading.value = true
-        const response = await axios.get(`${API_BASE_URL}/users/discover`, {
+        const response = await axios.get('/users/discover', {
             headers: {
                 'user-token': userId.value
             }
@@ -63,7 +61,7 @@ const handleSwipe = async (action: 'like' | 'dislike') => {
     try {
         loading.value = true
 
-        const response = await axios.post(`${API_BASE_URL}/likes/swipe`, {
+        const response = await axios.post('/likes/swipe', {
             targetUserId: currentUser.value._id,
             action
         }, {

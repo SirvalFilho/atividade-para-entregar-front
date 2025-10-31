@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 const router = useRouter()
 
@@ -24,12 +24,10 @@ onMounted(async () => {
     await loadMatches()
 })
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'
-
 const loadMatches = async () => {
     try {
         loading.value = true
-        const response = await axios.get(`${API_BASE_URL}/matches`, {
+        const response = await axios.get('/matches', {
             headers: {
                 'user-token': userId.value
             }

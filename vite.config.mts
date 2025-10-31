@@ -64,9 +64,9 @@ export default defineConfig({
       "unplugin-vue-router/data-loaders/basic",
     ],
   },
-  define: { 
+  define: {
     "process.env": {},
-    global: 'globalThis'
+    global: "globalThis",
   },
   build: {
     commonjsOptions: {

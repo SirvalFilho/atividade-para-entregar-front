@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3003";
+import axios from "@/plugins/axios";
 
 export const userService = {
   async createUser(username: string, password: string) {
-    const response = await axios.post(`${API_BASE_URL}/users`, {
+    const response = await axios.post("/users", {
       username,
       password,
     });
@@ -12,7 +10,7 @@ export const userService = {
   },
 
   async login(username: string, password: string) {
-    const response = await axios.post(`${API_BASE_URL}/login`, {
+    const response = await axios.post("/login", {
       username,
       password,
     });
@@ -29,18 +27,14 @@ export const userService = {
       profileImage?: string;
     }
   ) {
-    const response = await axios.put(
-      `${API_BASE_URL}/users/${userId}/profile`,
-      profileData
-    );
+    const response = await axios.put(`/users/${userId}/profile`, profileData);
     return response.data;
   },
 
   async updateInterests(userId: string, interests: string[]) {
-    const response = await axios.put(
-      `${API_BASE_URL}/users/${userId}/interests`,
-      { interests }
-    );
+    const response = await axios.put(`/users/${userId}/interests`, {
+      interests,
+    });
     return response.data;
   },
 };
