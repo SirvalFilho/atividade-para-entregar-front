@@ -38,10 +38,12 @@ onMounted(async () => {
     await loadUsers()
 })
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'
+
 const loadUsers = async () => {
     try {
         loading.value = true
-        const response = await axios.get('http://localhost:3003/users/discover', {
+        const response = await axios.get(`${API_BASE_URL}/users/discover`, {
             headers: {
                 'user-token': userId.value
             }
@@ -61,7 +63,7 @@ const handleSwipe = async (action: 'like' | 'dislike') => {
     try {
         loading.value = true
 
-        const response = await axios.post('http://localhost:3003/likes/swipe', {
+        const response = await axios.post(`${API_BASE_URL}/likes/swipe`, {
             targetUserId: currentUser.value._id,
             action
         }, {

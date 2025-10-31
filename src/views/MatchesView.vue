@@ -24,10 +24,12 @@ onMounted(async () => {
     await loadMatches()
 })
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'
+
 const loadMatches = async () => {
     try {
         loading.value = true
-        const response = await axios.get('http://localhost:3003/matches', {
+        const response = await axios.get(`${API_BASE_URL}/matches`, {
             headers: {
                 'user-token': userId.value
             }
