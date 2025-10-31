@@ -64,7 +64,15 @@ export default defineConfig({
       "unplugin-vue-router/data-loaders/basic",
     ],
   },
-  define: { "process.env": {} },
+  define: { 
+    "process.env": {},
+    global: 'globalThis'
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("src", import.meta.url)),

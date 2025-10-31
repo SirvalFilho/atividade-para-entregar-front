@@ -6,7 +6,7 @@
 
 # Variáveis de ambiente (também configure no dashboard do Netlify)
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
 # Regras de redirecionamento para SPA (Vue Router)
 [[redirects]]
